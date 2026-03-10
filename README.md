@@ -1,0 +1,928 @@
+PA02 · Medio físico, variables ambientales, análisis espacial,
+correlación, regresión, manuscrito y presentación
+oral<small><br>Biogeografía (GEO-131)<br>Universidad Autónoma de Santo
+Domingo (UASD)</small>
+================
+El Tali
+2026-03-10
+
+Versión HTML (quizá más legible),
+[aquí](https://biogeografia-master.github.io/medio-fisico-variables-ambientales-manuscrito/README.html)
+
+# Fecha/hora de entrega
+
+[**VER PORTAL DE LA
+ASIGNATURA**](https://github.com/biogeografia-202601)
+
+------------------------------------------------------------------------
+
+## Objetivos
+
+El objetivo de esta práctica es que demuestres o mejores:
+
+- tus capacidades de **trabajar íntegramente en R** con datos
+  geoespaciales;
+- tus capacidades de **extraer valores de variables ambientales en
+  puntos**;
+- tus capacidades de **analizar relaciones entre variables mediante
+  correlación y regresión lineal simple**;
+- tus capacidades de **usar RMarkdown para producir documentos
+  científicos reproducibles**;
+- tus capacidades de **redacción científica**;
+- tus capacidades de **comunicar resultados mediante una presentación
+  oral breve**.
+
+Esta práctica tratará sobre **medio físico y variables ambientales de la
+República Dominicana**, usando una estrategia heurística: primero
+obtendrás y explorarás tus datos; luego, a partir de los patrones
+observados, formularás **preguntas, hipótesis y objetivos** que den
+sentido científico a tu manuscrito.
+
+El resultado esperado es un trabajo que cumpla estándares básicos de
+comunicación científica: **análisis reproducible en R, manuscrito en
+PDF, figuras y tablas bien integradas, citas y referencias, y
+presentación oral breve**.
+
+No escribas tu manuscrito sin haber pensado bien qué historia quieres
+contar con tus datos. No redactes la introducción ni los métodos sin
+tener claro qué pregunta vas a responder, qué hipótesis vas a probar y
+qué objetivos vas a perseguir. En materiales y métodos, y en resultados,
+usa gráficos y salidas vistosas propias de un manuscrito. Nada de pegar
+salida de la consola, gráficos básicos de R, o mapas mudos; no, eso no
+se puede publicar. Debes construir un manuscrito con figuras y tablas
+apropiadas, y R dispone de las herramientas para hacerlo. No te
+conformes con lo mínimo, haz un esfuerzo por construir un manuscrito que
+cumpla con estándares básicos de comunicación científica.
+
+------------------------------------------------------------------------
+
+# Entregables
+
+Debes producir **tres productos obligatorios**.
+
+## 1. Manuscrito reproducible (PDF)
+
+### Requisitos de formato
+
+Debes entregar un manuscrito breve en formato académico generado a
+partir de **RMarkdown**.
+
+La entrega se realiza mediante **commit + push al repositorio personal**
+asignado.
+
+Para el manuscrito debes usar la plantilla basada en APA 7 que se te
+provee en el repositorio, con el nombre:
+
+`plantilla.Rmd`
+
+Esta plantilla debe producir un **PDF reproducible**.
+
+### Estructura mínima
+
+El manuscrito debe incluir:
+
+- Título
+- Autor/a
+- Resumen y palabras clave
+- Introducción
+- Materiales y métodos
+- Resultados
+- Discusión
+- Conclusiones
+- Referencias
+- Opcional: material suplementario
+
+Las **figuras y tablas deben tener título y referencia cruzada dentro
+del texto**.
+
+**Extensión sugerida:** 4–8 páginas, sin contar referencias.
+
+------------------------------------------------------------------------
+
+## 2. Diapositivas
+
+Debes preparar una presentación breve para explicar tu trabajo.
+
+Formato recomendado:
+
+- 8–10 diapositivas
+- claridad visual
+- poco texto
+- figuras legibles
+
+Puedes seguir la estructura IMRaD si eso te ayuda, aunque no es
+obligatorio.
+
+Un esquema posible sería:
+
+- Título y autor/a
+- Contexto y problema
+- Pregunta, hipótesis y objetivos
+- Datos y métodos
+- Resultados principales
+- Discusión
+- Conclusiones
+
+------------------------------------------------------------------------
+
+## 3. Defensa oral
+
+Cada estudiante realizará una **exposición oral breve**.
+
+La defensa debe explicar al menos lo siguiente:
+
+- qué patrón observaste en tus datos;
+- qué pregunta formulaste a partir de ese patrón;
+- cómo generaste los puntos y seleccionaste las variables;
+- cómo hiciste la extracción, la correlación y la regresión;
+- cuáles fueron los resultados principales;
+- cómo los interpretas;
+- qué limitaciones tiene tu análisis.
+
+El objetivo no es leer el manuscrito, sino **explicar con claridad el
+argumento central del trabajo**.
+
+------------------------------------------------------------------------
+
+# Mandato de la práctica
+
+## Idea general
+
+En esta práctica trabajarás con variables ambientales geoespaciales de
+la República Dominicana. A cada estudiante se le asignará una
+combinación reproducible de:
+
+- **10 puntos aleatorios** dentro del territorio nacional;
+- **5 variables cuantitativas** del medio físico o del clima.
+
+Con esos datos construirás una pequeña matriz ambiental, y a partir de
+ella realizarás tres análisis centrales:
+
+1.  **análisis espacial** para extraer valores de rásters en puntos;
+2.  **correlación** entre variables ambientales;
+3.  **regresión lineal simple** usando el par de variables más
+    fuertemente relacionado.
+
+A diferencia de la versión original de esta práctica, aquí **no
+entregarás ejercicios aislados ni trabajo manual en papel**. Todo el
+flujo se desarrollará en **R**, y los resultados obtenidos serán la base
+para redactar un **manuscrito científico breve** y preparar una
+**presentación oral**.
+
+## Enfoque heurístico de la práctica
+
+En una investigación clásica, primero se formulan preguntas e hipótesis,
+y luego se buscan o producen datos para ponerlas a prueba. En esta
+práctica trabajaremos de forma parcialmente inversa: primero generarás y
+explorarás tus datos, y luego, a partir de los patrones observados,
+formularás una pregunta, una hipótesis y unos objetivos plausibles y
+coherentes con tus resultados.
+
+Este procedimiento es válido como ejercicio de aprendizaje porque te
+obliga a:
+
+- manipular datos espaciales en R;
+- reconocer patrones cuantitativos;
+- convertir resultados analíticos en argumentos científicos;
+- redactar un texto académico con estructura formal.
+
+------------------------------------------------------------------------
+
+## Fuentes disponibles para este ejercicio
+
+Las variables provienen de varios conjuntos ráster ya preparados para el
+curso. Para esta práctica nos concentraremos en las **variables
+cuantitativas**, porque son las apropiadas para correlación y regresión
+lineal simple.
+
+Entre ellas se incluyen, por ejemplo:
+
+- `CGIAR-ELEVACION.tif`: elevación;
+- `G90-PENDIENTE.tif`: pendiente en grados;
+- `YINSOLTIME_horas_insolacion_topografica.tif`: horas de insolación
+  topográfica;
+- `CHELSA*.tif`: variables bioclimáticas.
+
+Las variables `PROBAV*` y `G90-GEOMORFONOS` existen en el repositorio,
+pero son cualitativas y no serán el centro del análisis estadístico de
+esta práctica.
+
+``` r
+library(tidyverse)
+library(raster)
+
+tipos_var <- data.frame(
+  Fuente = list.files('data', pattern = '*tif', full.names = TRUE)
+) %>% 
+  mutate(Tipo = ifelse(grepl('PROBA|G90-GEOM', Fuente), 'Cualitativa', 'Cuantitativa'))
+
+tipos_var %>% 
+  knitr::kable()
+```
+
+| Fuente                                           | Tipo         |
+|:-------------------------------------------------|:-------------|
+| data/CGIAR-ELEVACION.tif                         | Cuantitativa |
+| data/CHELSA_bio1_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio10_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio11_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio12_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio13_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio14_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio15_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio16_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio17_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio18_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio19_1981-2010_V21.tif              | Cuantitativa |
+| data/CHELSA_bio2_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio3_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio4_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio5_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio6_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio7_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio8_1981-2010_V21.tif               | Cuantitativa |
+| data/CHELSA_bio9_1981-2010_V21.tif               | Cuantitativa |
+| data/G90-GEOMORFONOS.tif                         | Cualitativa  |
+| data/G90-PENDIENTE.tif                           | Cuantitativa |
+| data/PROBAV_2015.tif                             | Cualitativa  |
+| data/PROBAV_2016.tif                             | Cualitativa  |
+| data/PROBAV_2017.tif                             | Cualitativa  |
+| data/PROBAV_2018.tif                             | Cualitativa  |
+| data/PROBAV_2019.tif                             | Cualitativa  |
+| data/YINSOLTIME-horas_insolacion_topografica.tif | Cuantitativa |
+
+------------------------------------------------------------------------
+
+# Instrucciones generales
+
+1.  **Toda la práctica se realizará en R y se integrará en un manuscrito
+    reproducible.** Ya no se entrega en papel ni como ejercicios
+    sueltos.
+
+2.  Debes trabajar dentro de tu repositorio personal del curso. Organiza
+    tu trabajo de forma que otra persona pueda reproducirlo.
+
+3.  Elige un número entero entre **101 y 130** y anúncialo en el foro
+    para evitar duplicidad. Ese número será tu semilla de aleatorización
+    y deberá asignarse al objeto `mi_aleatorizacion`. Este ejemplo está
+    basado en la aleatorización 100, pero no debes usar ese número como
+    tu aleatorización.
+
+``` r
+mi_aleatorizacion <-  #<-----Atender aquí
+```
+
+4.  Debes conservar evidencia reproducible de todos los pasos:
+    generación de puntos, selección de variables, extracción de valores,
+    matriz de correlación, gráfico de dispersión y modelo de regresión.
+
+5.  Los análisis centrales de la práctica deben hacerse en **R**. Puedes
+    usar IA como apoyo conceptual o para depurar código, pero no como
+    sustituto del análisis ni de la redacción consciente.
+
+6.  Tus preguntas, hipótesis y objetivos deben derivarse de los
+    resultados que obtengas, pero deben quedar redactados como si fueran
+    parte de una investigación formal y coherente.
+
+7.  Carga estos paquetes como punto de partida:
+
+``` r
+library(sf)
+library(raster)
+library(tidyverse)
+library(kableExtra)
+```
+
+------------------------------------------------------------------------
+
+# Secuencia analítica obligatoria
+
+## Paso 1. Genera tus 10 puntos aleatorios
+
+Primero genera tus 10 puntos aleatorios dentro del polígono de la
+República Dominicana.
+
+``` r
+rd <- st_read('data/RD_GADM.gpkg', quiet = TRUE)
+
+{set.seed(mi_aleatorizacion)
+  puntos <- st_as_sf(st_sample(rd, size = 10, type = 'random'))
+  st_geometry(puntos) <- "geometry"}
+```
+
+Genera una tabla de coordenadas para documentar tus puntos.
+
+``` r
+puntos %>%
+  mutate(
+    Punto = paste('Punto', 1:nrow(puntos)),
+    Longitud = round(st_coordinates(geometry)[,1], 4),
+    Latitud = round(st_coordinates(geometry)[,2], 4)
+  ) %>%
+  st_drop_geometry() %>%
+  as.data.frame() %>%
+  knitr::kable(align = 'c')
+```
+
+|  Punto   | Longitud | Latitud |
+|:--------:|:--------:|:-------:|
+| Punto 1  | -70.8709 | 18.7912 |
+| Punto 2  | -71.0553 | 19.3109 |
+| Punto 3  | -69.9706 | 18.5002 |
+| Punto 4  | -70.2790 | 19.3636 |
+| Punto 5  | -69.0132 | 18.8177 |
+| Punto 6  | -69.9919 | 18.6680 |
+| Punto 7  | -71.3771 | 19.7551 |
+| Punto 8  | -70.9718 | 19.1782 |
+| Punto 9  | -70.5370 | 19.6584 |
+| Punto 10 | -69.5411 | 19.0156 |
+
+Representa además tus puntos en un mapa simple para incorporarlo al
+manuscrito o al material suplementario.
+
+``` r
+plot(rd %>% st_as_sfc())
+plot(puntos, add = TRUE)
+```
+
+<img src="README_files/figure-gfm/unnamed-chunk-9-1.png" width="100%" />
+
+------------------------------------------------------------------------
+
+## Paso 2. Selecciona tus cinco variables cuantitativas
+
+Se te asignarán cinco variables cuantitativas según tu semilla. Usa este
+código para generarlas.
+
+``` r
+{set.seed(mi_aleatorizacion)
+  
+  v_topo <- tipos_var$Fuente[grepl('G90-PE|CGIAR|YINS', tipos_var$Fuente)]
+  
+  v_bio_1_11 <- tipos_var$Fuente[
+    grepl(paste0('CHELSA_bio', 1:11, '_', collapse = '|'), tipos_var$Fuente)
+  ]
+  
+  v_bio_12_19 <- tipos_var$Fuente[
+    grepl(paste0('CHELSA_bio', 12:19, '_', collapse = '|'), tipos_var$Fuente)
+  ]
+  
+  v_bio_todas <- tipos_var$Fuente[
+    grepl(paste0('CHELSA_bio', 1:19, '_', collapse = '|'), tipos_var$Fuente)
+  ]
+  
+  set.seed(mi_aleatorizacion)
+  
+  sel_topo <- sample(v_topo, 2)
+  sel_bio_1_11 <- sample(v_bio_1_11, 1)
+  sel_bio_12_19 <- sample(v_bio_12_19, 1)
+  
+  v_bio_restantes <- setdiff(v_bio_todas, c(sel_bio_1_11, sel_bio_12_19))
+  sel_bio_extra <- sample(v_bio_restantes, 1)
+  
+  fuentes_cuan_sel <- c(
+    sel_topo,
+    sel_bio_1_11,
+    sel_bio_12_19,
+    sel_bio_extra
+  )
+}
+cat('Estos fueron mis archivos seleccionados', fuentes_cuan_sel, sep = '\n')
+```
+
+    ## Estos fueron mis archivos seleccionados
+    ## data/G90-PENDIENTE.tif
+    ## data/CGIAR-ELEVACION.tif
+    ## data/CHELSA_bio4_1981-2010_V21.tif
+    ## data/CHELSA_bio19_1981-2010_V21.tif
+    ## data/CHELSA_bio6_1981-2010_V21.tif
+
+> Si alguna combinación no produce la distribución esperada entre tipos
+> de variables, puedes ajustar el muestreo manteniendo siempre el
+> criterio de reproducibilidad con semilla y dejando constancia del
+> cambio en materiales y métodos.
+
+------------------------------------------------------------------------
+
+## Paso 3. Extrae los valores de los rásters en tus puntos
+
+Usando tus 10 puntos, extrae los valores de las cinco variables
+asignadas.
+
+Con `sapply`:
+
+``` r
+df_valores_cuan_sel_sapply <- sapply(
+  fuentes_cuan_sel,
+  function(archivo) {
+    r_i <- raster(archivo)
+    raster::extract(x = r_i, y = puntos)
+  }
+) %>%
+  as.data.frame() %>%
+  setNames(gsub('.tif', '', basename(fuentes_cuan_sel)))
+```
+
+Con bucle `for`:
+
+``` r
+df_resultados <- list()
+for (archivo in fuentes_cuan_sel) {
+  r_a <- raster(archivo)
+  v <- raster::extract(x = r_a, y = puntos)
+  df_resultados[[archivo]] <- v
+}
+
+df_valores_cuan_sel_for <- df_resultados %>%
+  as.data.frame() %>%
+  setNames(gsub('.tif', '', basename(fuentes_cuan_sel)))
+```
+
+Comprueba que ambos procedimientos devuelven el mismo resultado.
+
+``` r
+all.equal(df_valores_cuan_sel_sapply, df_valores_cuan_sel_for)
+```
+
+    ## [1] TRUE
+
+Muestra tu tabla de valores extraídos.
+
+``` r
+df_valores_cuan_sel_for %>%
+  knitr::kable(align = 'c', digits = 2)
+```
+
+| G90-PENDIENTE | CGIAR-ELEVACION | CHELSA_bio4_1981-2010_V21 | CHELSA_bio19_1981-2010_V21 | CHELSA_bio6_1981-2010_V21 |
+|:-------------:|:---------------:|:-------------------------:|:--------------------------:|:-------------------------:|
+|     8.93      |     989.46      |           1053            |            1568            |           2884            |
+|     20.19     |     596.50      |           1386            |            2027            |           2898            |
+|     2.89      |      42.98      |           1014            |            2188            |           2931            |
+|     1.31      |     197.07      |           1388            |            3743            |           2912            |
+|     3.24      |     153.91      |           1172            |            2505            |           2935            |
+|     2.24      |      56.02      |           1107            |            2573            |           2922            |
+|     0.80      |      79.21      |           1621            |            1515            |           2937            |
+|     20.32     |     1326.37     |           1234            |            2443            |           2859            |
+|     4.08      |      93.09      |           1292            |            4097            |           2941            |
+|     4.75      |     204.55      |           1231            |            4145            |           2921            |
+
+### Conversión de variables CHELSA a unidades reales
+
+Las variables CHELSA usan factor de escala y, en algunos casos,
+*offset*. Corrige sus valores con este bloque.
+
+``` r
+vars_offset <- paste0('_bio', c(1, 5:6, 8:11), '_')
+
+df_valores_cuan_sel_reales <- df_valores_cuan_sel_sapply %>%
+  mutate(
+    across(matches('bio\\d+'), ~ . * 0.1),
+    across(matches(paste(vars_offset, collapse = '|')), ~ . - 273.15)
+  )
+```
+
+``` r
+df_valores_cuan_sel_reales %>%
+  knitr::kable(align = 'c', digits = 2)
+```
+
+| G90-PENDIENTE | CGIAR-ELEVACION | CHELSA_bio4_1981-2010_V21 | CHELSA_bio19_1981-2010_V21 | CHELSA_bio6_1981-2010_V21 |
+|:-------------:|:---------------:|:-------------------------:|:--------------------------:|:-------------------------:|
+|     8.93      |     989.46      |           105.3           |           156.8            |           15.25           |
+|     20.19     |     596.50      |           138.6           |           202.7            |           16.65           |
+|     2.89      |      42.98      |           101.4           |           218.8            |           19.95           |
+|     1.31      |     197.07      |           138.8           |           374.3            |           18.05           |
+|     3.24      |     153.91      |           117.2           |           250.5            |           20.35           |
+|     2.24      |      56.02      |           110.7           |           257.3            |           19.05           |
+|     0.80      |      79.21      |           162.1           |           151.5            |           20.55           |
+|     20.32     |     1326.37     |           123.4           |           244.3            |           12.75           |
+|     4.08      |      93.09      |           129.2           |           409.7            |           20.95           |
+|     4.75      |     204.55      |           123.1           |           414.5            |           18.95           |
+
+Esta tabla será una de las bases de tu sección de **resultados**.
+
+------------------------------------------------------------------------
+
+## Paso 4. Construye e interpreta la matriz de correlación
+
+Construye una matriz de correlación de Pearson con tus cinco variables
+cuantitativas.
+
+``` r
+correlacion <- cor(df_valores_cuan_sel_reales)
+correlacion_inferior <- correlacion
+correlacion_inferior[upper.tri(correlacion_inferior, diag = TRUE)] <- NA
+correlacion_inferior <- round(correlacion_inferior, 3)
+correlacion_inferior[is.na(correlacion_inferior)] <- ''
+```
+
+``` r
+correlacion_inferior %>% knitr::kable()
+```
+
+|                            | G90-PENDIENTE | CGIAR-ELEVACION | CHELSA_bio4_1981-2010_V21 | CHELSA_bio19_1981-2010_V21 | CHELSA_bio6_1981-2010_V21 |
+|:---------------------------|:--------------|:----------------|:--------------------------|:---------------------------|:--------------------------|
+| G90-PENDIENTE              |               |                 |                           |                            |                           |
+| CGIAR-ELEVACION            | 0.819         |                 |                           |                            |                           |
+| CHELSA_bio4_1981-2010_V21  | -0.002        | -0.146          |                           |                            |                           |
+| CHELSA_bio19_1981-2010_V21 | -0.26         | -0.33           | 0.016                     |                            |                           |
+| CHELSA_bio6_1981-2010_V21  | -0.803        | -0.957          | 0.163                     | 0.273                      |                           |
+
+Identifica el **par de variables con mayor valor absoluto del
+coeficiente de correlación de Pearson**. Ese par será el núcleo de tu
+análisis posterior y de tu narración científica.
+
+Puedes ayudarte con este bloque:
+
+``` r
+cor_mat <- cor(df_valores_cuan_sel_reales)
+cor_abs <- abs(cor_mat)
+cor_abs[upper.tri(cor_abs, diag = TRUE)] <- NA
+idx <- which(cor_abs == max(cor_abs, na.rm = TRUE), arr.ind = TRUE)[1, ]
+var_x_nombre <- colnames(cor_mat)[idx[2]]
+var_y_nombre <- colnames(cor_mat)[idx[1]]
+coef_cor_max <- cor_mat[idx[1], idx[2]]
+
+var_x_nombre
+```
+
+    ## [1] "CGIAR-ELEVACION"
+
+``` r
+var_y_nombre
+```
+
+    ## [1] "CHELSA_bio6_1981-2010_V21"
+
+``` r
+coef_cor_max
+```
+
+    ## [1] -0.9572431
+
+------------------------------------------------------------------------
+
+## Paso 5. Representa gráficamente el par de variables seleccionado
+
+Construye un gráfico de dispersión del par de variables con mayor
+correlación absoluta e incorpora la recta ajustada.
+
+``` r
+var1 <- df_valores_cuan_sel_reales[[var_x_nombre]]
+var2 <- df_valores_cuan_sel_reales[[var_y_nombre]]
+
+plot(var1, var2, xlab = var_x_nombre, ylab = var_y_nombre)
+abline(lm(var2 ~ var1), col = 'red')
+```
+
+<img src="README_files/figure-gfm/unnamed-chunk-20-1.png" width="100%" />
+
+Este gráfico debe aparecer en tu manuscrito como una **figura
+interpretada**, no sólo como salida técnica.
+
+------------------------------------------------------------------------
+
+## Paso 6. Ajusta un modelo de regresión lineal simple
+
+Usando ese mismo par de variables, construye un modelo de regresión
+lineal simple. Debes decidir cuál variable funcionará como respuesta y
+cuál como predictora, y justificar esa decisión.
+
+``` r
+x <- df_valores_cuan_sel_reales[[var_x_nombre]]
+y <- df_valores_cuan_sel_reales[[var_y_nombre]]
+
+modelo <- lm(y ~ x)
+summary(modelo)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = y ~ x)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -1.1948 -0.3241 -0.1519  0.5973  1.1202 
+    ## 
+    ## Coefficients:
+    ##              Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept) 20.353384   0.340974  59.692 6.89e-12 ***
+    ## x           -0.005625   0.000601  -9.359 1.39e-05 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 0.8109 on 8 degrees of freedom
+    ## Multiple R-squared:  0.9163, Adjusted R-squared:  0.9059 
+    ## F-statistic:  87.6 on 1 and 8 DF,  p-value: 1.388e-05
+
+> Puedes probar salidas estilizadas, especialmente para el manuscrito,
+> usando el paquete `gtsummary` o el paquete `xtab`. Igualmente, para
+> representar gráficos de dispersión estilizados, puedes usar paquetes
+> que los muestran incluso con el modelo generado en la forma
+> `y ~ ax + b`.
+
+Extrae e informa al menos:
+
+- intercepto;
+- pendiente;
+- signo de la relación;
+- magnitud aproximada del ajuste;
+- sentido biogeográfico o ambiental de esa relación.
+
+Puedes obtener los coeficientes así:
+
+``` r
+coef(modelo)
+```
+
+    ## (Intercept)           x 
+    ## 20.35338371 -0.00562528
+
+Y puedes añadir una tabla simple con valores observados y ajustados si
+lo consideras útil.
+
+------------------------------------------------------------------------
+
+## Paso 7. Convierte el análisis en un manuscrito
+
+Una vez tengas los resultados anteriores, debes convertirlos en un
+trabajo con lógica científica. DETENTE UN MOMENTO AQUÍ, IMPORTANTE,
+REITERANDO. No sigas adelante sin haber pensado bien qué historia
+quieres contar con tus datos. No redactes la introducción ni los métodos
+sin tener claro qué pregunta vas a responder, qué hipótesis vas a probar
+y qué objetivos vas a perseguir. En materiales y métodos, y en
+resultados, usa gráficos y salidas vistosas propias de un manuscrito.
+Nada de pegar salida de la consola, gráficos básicos de R, o mapas
+mudos; no, eso no se puede publicar. Debes construir un manuscrito con
+figuras y tablas apropiadas, y R dispone de las herramientas para
+hacerlo. No te conformes con lo mínimo, haz un esfuerzo por construir un
+manuscrito que cumpla con estándares básicos de comunicación científica.
+
+### Qué debes hacer
+
+A partir del patrón observado en tus datos:
+
+- proponer una **pregunta de investigación**;
+- formular una **hipótesis**;
+- redactar **objetivo general** y, si lo deseas, objetivos específicos;
+- construir una narración coherente entre datos, métodos, resultados e
+  interpretación.
+
+Tu pregunta no debe ser inventada al azar ni desconectada del análisis.
+Debe surgir de la relación observada entre las variables seleccionadas.
+
+Ejemplos del tipo de pregunta que podría surgir:
+
+- ¿Existe una relación lineal entre la elevación y una variable
+  bioclimática en los puntos seleccionados?
+- ¿Qué tan fuerte es la asociación entre dos variables del medio físico
+  en una muestra espacial aleatoria de la República Dominicana?
+- ¿Puede una variable topográfica actuar como predictora simple de una
+  variable climática en los puntos analizados?
+
+No copies estos ejemplos literalmente salvo que realmente coincidan con
+tu caso. Debes adaptarlos a tus variables concretas.
+
+------------------------------------------------------------------------
+
+# Estructura del manuscrito
+
+## Introducción
+
+Extensión sugerida: **3 párrafos**.
+
+Debes:
+
+- explicar qué se entiende por medio físico o variables ambientales en
+  biogeografía;
+- explicar por qué la relación entre variables ambientales puede ser
+  importante para comprender patrones ecológicos o biogeográficos;
+- presentar la pregunta, hipótesis y objetivos de tu trabajo;
+- introducir brevemente las variables concretas que analizarás.
+
+La introducción debe incluir **al menos tres citas bibliográficas**.
+
+------------------------------------------------------------------------
+
+## Materiales y métodos
+
+Extensión sugerida: **2–3 párrafos**.
+
+Debes describir:
+
+- el área general de estudio (República Dominicana);
+- el procedimiento de generación de puntos aleatorios mediante semilla;
+- las fuentes ráster utilizadas;
+- la extracción de valores en puntos;
+- el análisis de correlación;
+- el ajuste del modelo de regresión lineal simple;
+- el software usado, especialmente R y los paquetes principales.
+
+No adelantes resultados en esta sección.
+
+Si incluyes tablas, diagramas o esquemas metodológicos, debes referirte
+a ellos mediante **referencias cruzadas**.
+
+------------------------------------------------------------------------
+
+## Resultados
+
+Extensión sugerida: **1–2 párrafos**, además de tablas y figuras.
+
+Debes presentar, como mínimo:
+
+- la tabla de variables seleccionadas o la tabla de valores extraídos;
+- la matriz de correlación;
+- el par de variables escogido;
+- el gráfico de dispersión;
+- los coeficientes principales del modelo lineal.
+
+Aquí debes **mostrar** qué obtuviste. La interpretación extensa
+corresponde sobre todo a la discusión.
+
+------------------------------------------------------------------------
+
+## Discusión
+
+Extensión sugerida: **2 párrafos**.
+
+Debes:
+
+- indicar si tus resultados respaldan o no tu hipótesis;
+- interpretar el sentido del coeficiente de correlación y de la
+  pendiente del modelo;
+- discutir la plausibilidad ambiental o biogeográfica del patrón
+  observado;
+- mencionar limitaciones, por ejemplo el tamaño muestral, la naturaleza
+  exploratoria del ejercicio y el hecho de que la selección deriva de
+  una aleatorización.
+
+------------------------------------------------------------------------
+
+## Conclusiones
+
+Redacta una conclusión breve y directa.
+
+Debe sintetizar:
+
+- qué relación identificaste;
+- qué aprendiste del uso de R para este tipo de análisis;
+- qué limitaciones y posibilidades futuras deja el ejercicio.
+
+------------------------------------------------------------------------
+
+## Referencias
+
+Todas las referencias citadas deben aparecer en la sección final.
+
+Debes utilizar **formato APA 7** mediante **BibTeX**. La plantilla, al
+tejerse, se encarga de adaptar las citas y los estilos a APA 7, por lo
+que sólo tendrás que ocuparte de buscar fuentes y citarlas
+adecuadamente.
+
+------------------------------------------------------------------------
+
+# Recomendaciones de redacción
+
+Usa una voz activa o pasiva de forma consistente.
+
+Ejemplos:
+
+**Voz activa**
+
+- Analicé los datos ambientales utilizando R.
+- Los resultados muestran una asociación negativa entre las variables.
+
+**Voz pasiva**
+
+- Los datos ambientales fueron analizados utilizando R.
+- Se observó una asociación negativa entre las variables.
+
+Ambas formas son aceptables en redacción científica.
+
+Evita:
+
+- narrar el manuscrito como una lista de comandos;
+- confundir correlación con causalidad;
+- afirmar mecanismos ecológicos complejos que no puedes sostener con
+  este análisis simple.
+
+------------------------------------------------------------------------
+
+## Uso de inteligencia artificial
+
+Está permitido utilizar herramientas de IA.
+
+Sin embargo:
+
+- úsala como **tutor**, no como redactor automático;
+- verifica conceptos, código y referencias;
+- no copies texto sin revisarlo;
+- no inventes citas bibliográficas;
+- recuerda que el producto final debe reflejar comprensión real de tus
+  análisis.
+
+------------------------------------------------------------------------
+
+# Organización del trabajo (3 días)
+
+## Día 1 — Generación y análisis
+
+Debes completar:
+
+- elección y anuncio de tu semilla;
+- generación de puntos;
+- selección de variables;
+- extracción de valores;
+- matriz de correlación;
+- selección del par de variables;
+- ajuste inicial del modelo de regresión.
+
+Avanzar también en:
+
+- guardado de figuras;
+- tablas de resultados;
+- notas para materiales y métodos.
+
+------------------------------------------------------------------------
+
+## Día 2 — Redacción del manuscrito
+
+Debes redactar:
+
+- introducción;
+- materiales y métodos;
+- resultados;
+- discusión;
+- conclusiones.
+
+Además:
+
+- inserta figuras y tablas finales;
+- revisa citas y referencias;
+- compila el PDF final.
+
+------------------------------------------------------------------------
+
+## Día 3 — Presentación
+
+Debes completar:
+
+- manuscrito final;
+- diapositivas;
+- preparación de la defensa oral.
+
+Realizarás:
+
+- exposición oral en clase.
+
+------------------------------------------------------------------------
+
+# Criterios de evaluación del manuscrito
+
+| Criterio                               | Nivel 1                 | Nivel 2            | Nivel 3              | Nivel 4                              |
+|----------------------------------------|-------------------------|--------------------|----------------------|--------------------------------------|
+| Análisis espacial y extracción         | Incorrecto o incompleto | Básico             | Correcto             | Correcto y bien documentado          |
+| Correlación y regresión                | Incorrectas             | Aplicación parcial | Aplicación correcta  | Aplicación rigurosa y bien explicada |
+| Uso de R y reproducibilidad            | Muy limitado            | Adecuado           | Buen manejo          | Manejo avanzado y totalmente claro   |
+| Redacción científica                   | Deficiente              | Clara pero simple  | Fluida               | Muy sólida                           |
+| Estructura del manuscrito              | Incorrecta              | Básica             | Bien organizada      | Impecable                            |
+| Figuras y tablas                       | Ausentes o incorrectas  | Uso básico         | Buena integración    | Integración excelente                |
+| Citas y referencias                    | Incorrectas             | Algunas correctas  | Mayormente correctas | Uso correcto y consistente de APA 7  |
+| Coherencia entre datos y argumentación | Débil                   | Parcial            | Coherente            | Muy convincente                      |
+
+------------------------------------------------------------------------
+
+# Criterios de evaluación de la presentación oral
+
+| Criterio                           | Nivel 1           | Nivel 2              | Nivel 3                | Nivel 4                            |
+|------------------------------------|-------------------|----------------------|------------------------|------------------------------------|
+| Claridad de la exposición          | Difícil de seguir | Comprensible         | Clara                  | Muy clara y bien estructurada      |
+| Uso de diapositivas                | Confusas          | Básicas              | Buen apoyo visual      | Excelente diseño visual            |
+| Explicación del método             | Poco clara        | Parcial              | Correcta               | Muy bien explicada                 |
+| Interpretación de resultados       | Ausente o débil   | Básica               | Adecuada               | Profunda y crítica                 |
+| Manejo del tiempo                  | Fuera del tiempo  | Ligeramente fuera    | Ajustado               | Perfectamente ajustado             |
+| Capacidad de defensa               | No responde       | Respuestas limitadas | Responde correctamente | Argumenta con claridad y seguridad |
+| Coherencia entre manuscrito y oral | Baja              | Parcial              | Buena                  | Muy alta                           |
+
+------------------------------------------------------------------------
+
+# Resumen
+
+En esta práctica debes:
+
+1.  trabajar en **R**;
+2.  generar **10 puntos aleatorios** con tu semilla;
+3.  extraer valores de **5 variables cuantitativas**;
+4.  construir una **matriz de correlación**;
+5.  elegir el par con **mayor correlación absoluta**;
+6.  ajustar una **regresión lineal simple**;
+7.  convertir esos resultados en un **manuscrito científico
+    reproducible**;
+8.  preparar **diapositivas** y una **presentación oral**.
+
+La práctica no consiste en resolver ejercicios separados, sino en
+**transformar un análisis ambiental exploratorio en una pieza breve de
+comunicación científica**.
+
+## Referencias
