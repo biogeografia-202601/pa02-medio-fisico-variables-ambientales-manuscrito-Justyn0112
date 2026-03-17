@@ -11,7 +11,7 @@ documentclass: apa7
 classoption: [man,floatsintext]
 fontsize: 12pt
 lang: es-ES
-bibliography: bibliografia.bib
+bibliography: references.bib
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 header-includes:
   - \title{Mi manuscrito en APA 7}
@@ -36,15 +36,14 @@ header-includes:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  cache = FALSE,
-  echo = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  dpi = 300,
-  fig.align = "center",
-  out.width = "100%"
+	echo = FALSE,
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE,
+	cache = FALSE,
+	dpi = 300,
+	out.width = "100%"
 )
-
 options(
   knitr.duplicate.label = "allow",
   knitr.kable.NA = ""
@@ -62,95 +61,218 @@ library(kableExtra)
 theme_set(theme_bw())
 ```
 
+```{r, include=FALSE}
+library(tidyverse)
+library(raster)
+
+tipos_var <- data.frame(
+  Fuente = list.files('data', pattern = '*tif', full.names = TRUE)
+) %>% 
+  mutate(Tipo = ifelse(grepl('PROBA|G90-GEOM', Fuente), 'Cualitativa', 'Cuantitativa'))
+
+tipos_var %>% 
+  knitr::kable()
+```
+
+```{r}
+library(sf)
+library(raster)
+library(tidyverse)
+library(kableExtra)
+```
+
+```{r}
+rd <- st_read('data/RD_GADM.gpkg', quiet = TRUE)
+
+{set.seed(123)
+  puntos <- st_as_sf(st_sample(rd, size = 10, type = 'random'))
+  st_geometry(puntos) <- "geometry"}
+```
+
 # Introducción
 
-Esta sección debes incluir las partes básicas que se supone debe contener una introducción. Apóyate en la [Guía para proyecto de investigación](https://biogeografia-master.github.io/proyecto-de-investigacion/guia-para-proyecto-de-investigacion.html) y en el mandato de la práctica. Aquí conviene redactar de forma fluida y apoyarse en referencias bibliográficas desde el inicio. Puedes usar citas indirectas: "La ecología numérica es una herramienta útil para la extracción de conclusiones sobre distribución de biodiversidad [@hengl2009geomorphometry; @anderson2010geomorphology]". También puedes usar citas narrativas, por ejemplo: "@anderson2010geomorphology discuten la importancia del tema en contextos comparables".
+El medio fisico en biogeografía son factores o condiciones abióticas y procesos que influencias donde las especies y comunidades pueden vivir y como están distribuidas en el espacio-tiempo, dichos factores interactúan con procesos biológicos que dan forma a patrones de biodiversidad [@Sanmartin2012Historical; @Matthews2021Island]. Gradientes ambientales como temperatura, salinidad, profundidad o nutrientes explican grandes fracciones de variación en la abundancia de especies y regiones biológicas en ecosistemas marinos y agua dulce [@Pitcher2012Exploring]; relacionar patrones con impulsores ambientales especificos permite explaciones mecanicas y predicciones robustas ante cambios climáticos o cambios de uso de terreno [@Williams2012Which].
+
+En gran mayoría de los casos las variables ambientales de diversos ecosistemas se ven relacionadas hasta cierto punto, una relación común es la de altitud sobre el nivel del mar con la temperatura del aire, ejemplos relacionables son casos como el de México, en el cuál la temperatura deciende entre 4.5–4.9°C por kilómetro de elevación [@Antunez2022Evidence], o el caso de las tierras bajas de Ucrania, donde la temperatura deciende 0.69°C por cada 100 metros de elevación [@Boychenko2022Assessing].
+
+Con la información presente surge la pregunta: ¿Existe una fuerte relación entre la altitud sobre el nivel del mar y la temperatura del aire en distintos puntos de la República Dominicana?, es de esperar que la respuesta sea positiva, uno de los puntos de interés donde la relación podría destacar más sería alrededor de la cordillera central.
 
 # Materiales y métodos
 
-Esta sección debe describir con claridad los datos, materiales, procedimientos, criterios de selección, procesamiento y métodos de análisis. También es un buen lugar para incluir referencias bibliográficas que justifiquen decisiones metodológicas. En esta seción deben existir también citas, ya sean directas [@hengl2009geomorphometry] o narrativas.
+El estudio se basa en el país República Dominicana perteneciente a la isla La Hispaniola, una isla de clima tropical-húmedo modificado por vientos alisios y su topografía montañosa. A pesar de encontrarse en el trópico de Cáncer su clima permanece cálido todo el año, oscilando entre 25°C a 30°C en la costa [@Elizahenna_r_clima_2023]. Se generaron diez puntos aleatorios dentro de los límites geográficos de la República Dominicana (Tabla \@ref(tab:tablapuntos)), usando el archivo de vectores de la base de datos GADM (Global Administrative Areas). El proceso se realizó en R, usando la función st_sample del paquete sf [@Erre; FALTA REFERENCIA A PAQUETE SF].
 
-Por ejemplo, los insumos utilizados pueden resumirse en la Tabla \@ref(tab:tabla-resumen), mientras que la Tabla \@ref(tab:tabla-manual) muestra un ejemplo de tabla escrita manualmente en Markdown.
-
-## Ejemplo de tabla generada con `kableExtra`
-
-
-```{r tabla-resumen}
-tabla_ejemplo <- tibble(
-  Material = c("Datos espaciales", "Software", "Bibliografía"),
-  Descripcion = c(
-    "Capas vectoriales y ráster usadas en el análisis",
-    "R, RStudio y paquetes especializados",
-    "Fuentes académicas empleadas como soporte"
-  ),
-  Uso = c(
-    "Procesamiento y elaboración de figuras",
-    "Análisis y generación de tablas",
-    "Contextualización teórica y metodológica"
-  )
-)
-
-kable(
-  tabla_ejemplo,
-  format = "latex",
-  booktabs = TRUE,
-  caption = "Resumen de materiales e insumos empleados en el estudio.",
-  align = c("l", "l", "l")
-) %>%
-  kable_styling(
-    latex_options = c("HOLD_position"),
-    full_width = FALSE,
-    font_size = 10
+```{r tablapuntos, tab.cap="Coordenadas geográficas de los 10 puntos aleatorios en República Dominicana."}
+puntos %>%
+  mutate(
+    Punto = paste('Punto', 1:nrow(puntos)),
+    Longitud = round(st_coordinates(geometry)[,1], 4),
+    Latitud = round(st_coordinates(geometry)[,2], 4)
   ) %>%
-  column_spec(2, width = "6cm") %>%
-  column_spec(3, width = "4.5cm") %>%
-  footnote(
-    general = "Ejemplo de tabla generada con kableExtra.",
-    general_title = "Nota:"
+  st_drop_geometry() %>%
+  as.data.frame() %>%
+  knitr::kable(
+    format = "pipe",  # Genera el estilo de líneas limpias
+    align = 'c', 
+    col.names = c("Punto", "Longitud", "Latitud") # Asegura mayúsculas en encabezados
   )
 ```
 
-## Ejemplo de tabla manual en Markdown
-
-La Tabla \@ref(tab:tabla-manual) ilustra cómo escribir una tabla simple manualmente.
-
-
-| Elemento        | Tipo      | Observación                      |
-|:----------------|:----------|:---------------------------------|
-| Área de estudio | Espacial  | Delimitación del sitio analizado |
-| Variables       | Atributos | Variables medidas o derivadas    |
-| Salidas         | Productos | Mapas, tablas y figuras          |
-
-Table: (\#tab:tabla-manual) Tabla de ejemplo escrita manualmente en Markdown.
-
-## Ejemplo de figura insertada desde archivo
-
-Te explico cómo insertar figuras y referirlas apropiadamente (referencia cruzada). Este es un ejemplo de referencia cruzada: "En la Figura \@ref(fig:figura-archivo) se muestra una imagen insertada desde un archivo externo.".
-
-Este es un ejemplo de inserción de figura desde archivo:
-
-> Sustituye `"figura-ejemplo.jpg"` por la ruta real de tu imagen.
-
-```{r figura-archivo, fig.cap="Figura de ejemplo insertada desde archivo externo.", out.width='100%'}
-knitr::include_graphics("figura-ejemplo.jpg")
+```{r}
+plot(rd %>% st_as_sfc())
+plot(puntos, add = TRUE)
 ```
 
+```{r, include=FALSE}
+st_write(puntos, "puntos_aleatorios.gpkg", delete_dsn = TRUE)
+st_write(rd, "contorno_rd.gpkg", delete_dsn = TRUE)
+```
 
-## Ejemplo de figura generada con código de R
+Para las variables ambientales de cada punto, se seleccionaron cinco variblaes cuantitativas mediante un procedimiento de aletorización para evitar sesgos y asegurar una representación integral del paisaje, se seleccionaron dos variables de naturaleza topográfica provenientes de las fuentes CGIAR, G90PE o YINSOLTIME; y tres variables bioclimáticas derivadas de la base de datos CHELSA v2.1. Estas últimas se dividieron para incluir obligatoriamente una métrica de temperatura (bio1-bio11), una de precipitación (bio12-bio19) y una variable bioclimática adicional aleatoria para el conjunto restante.
 
-Este es un ejemplo de referencia cruzada a una figura generada con código: "La Figura \@ref(fig:figura-codigo) muestra un gráfico sencillo producido con código reproducible de R".
+```{r, include=FALSE}
+{set.seed(123)
+  
+  v_topo <- tipos_var$Fuente[grepl('G90-PE|CGIAR|YINS', tipos_var$Fuente)]
+  
+  v_bio_1_11 <- tipos_var$Fuente[
+    grepl(paste0('CHELSA_bio', 1:11, '_', collapse = '|'), tipos_var$Fuente)
+  ]
+  
+  v_bio_12_19 <- tipos_var$Fuente[
+    grepl(paste0('CHELSA_bio', 12:19, '_', collapse = '|'), tipos_var$Fuente)
+  ]
+  
+  v_bio_todas <- tipos_var$Fuente[
+    grepl(paste0('CHELSA_bio', 1:19, '_', collapse = '|'), tipos_var$Fuente)
+  ]
+  
+  set.seed(123)
+  
+  sel_topo <- sample(v_topo, 2)
+  sel_bio_1_11 <- sample(v_bio_1_11, 1)
+  sel_bio_12_19 <- sample(v_bio_12_19, 1)
+  
+  v_bio_restantes <- setdiff(v_bio_todas, c(sel_bio_1_11, sel_bio_12_19))
+  sel_bio_extra <- sample(v_bio_restantes, 1)
+  
+  fuentes_cuan_sel <- c(
+    sel_topo,
+    sel_bio_1_11,
+    sel_bio_12_19,
+    sel_bio_extra
+  )
+}
+cat('Estos fueron mis archivos seleccionados', fuentes_cuan_sel, sep = '\n')
+```
 
+El proceso para la extracción de valores numéricos correspondientes a cada localidad (Tabla \@ref(tab:valoresambsinconv)) se llevó a cabo mediante la intersección espacial de las coordenadas geográgicas con las capas ráster usando la función extract del paquete raster en R  [@Raster; @Erre] . Para garantizar la eficiencia y consistencia del procesamiento de los mútliples archivos, se implementaron flujos de trabajo automáticos con a través de funciones vectorizadas (sapply) y estructuras de control iterativas (bucle for). Luego se verificó la integridad de los datos obtenidos mediante una prueba de identidad numérica. Los valores se transformaron a unidades reales mediante la aplicación de un factor de escala de 0.1. Adicionalmente, para las variables de temperaturas se aplicó un offset de -273.15 para convertir los valores de grados Kelvin a grados Celcius, la tabla representativa se observa en el apartado de resultados (Tabla \@ref(tab:valoresambconconv)).
 
-```{r figura-codigo, fig.cap="Relación de ejemplo entre dos variables usando el conjunto de datos `mtcars`.", out.width='100%'}
-ggplot(mtcars, aes(x = wt, y = mpg)) +
-  geom_point() +
-  labs(
-    x = "Peso del vehículo",
-    y = "Millas por galón"
-    )
+```{r}
+df_valores_cuan_sel_sapply <- sapply(
+  fuentes_cuan_sel,
+  function(archivo) {
+    r_i <- raster(archivo)
+    raster::extract(x = r_i, y = puntos)
+  }
+) %>%
+  as.data.frame() %>%
+  setNames(gsub('.tif', '', basename(fuentes_cuan_sel)))
+```
+
+```{r}
+df_resultados <- list()
+for (archivo in fuentes_cuan_sel) {
+  r_a <- raster(archivo)
+  v <- raster::extract(x = r_a, y = puntos)
+  df_resultados[[archivo]] <- v
+}
+
+df_valores_cuan_sel_for <- df_resultados %>%
+  as.data.frame() %>%
+  setNames(gsub('.tif', '', basename(fuentes_cuan_sel)))
+```
+
+```{r valoresambsinconv, tab.cap="Valores ambientales de cada punto pre-conversión"}
+df_valores_cuan_sel_for %>%
+  setNames(c("Insolación", "Elevación", "Bio11", "Bio17", "Bio12")) %>%
+  knitr::kable(
+    format = "pipe",
+    align = 'c',
+    digits = 2
+  )
+```
+
+```{r}
+vars_offset <- paste0('_bio', c(1, 5:6, 8:11), '_')
+
+df_valores_cuan_sel_reales <- df_valores_cuan_sel_sapply %>%
+  mutate(
+    across(matches('bio\\d+'), ~ . * 0.1),
+    across(matches(paste(vars_offset, collapse = '|')), ~ . - 273.15)
+  )
 ```
 
 # Resultados
+
+```{r valoresambconconv, tab.cap="Valores ambientales de cada punto post-conversión"}
+df_valores_cuan_sel_reales %>%
+ setNames(c("Insolación", "Elevación", "Bio11", "Bio17", "Bio12")) %>%
+  knitr::kable(
+    format = "pipe",
+    align = 'c',
+    digits = 2
+  )
+```
+
+```{r}
+correlacion <- cor(df_valores_cuan_sel_reales)
+correlacion_inferior <- correlacion
+correlacion_inferior[upper.tri(correlacion_inferior, diag = TRUE)] <- NA
+correlacion_inferior <- round(correlacion_inferior, 3)
+correlacion_inferior[is.na(correlacion_inferior)] <- ''
+```
+
+```{r tabcorr, tab.cap="Matríz de correlación de Pearson"}
+  nombres_cortos <- c("Insol", "Elev", "Bio11", "Bio17", "Bio12")
+rownames(correlacion_inferior) <- nombres_cortos
+colnames(correlacion_inferior) <- nombres_cortos
+correlacion_inferior %>%
+  knitr::kable(
+    format = "pipe",
+    align = 'c',
+  )
+```
+
+```{r, include=FALSE}
+cor_mat <- cor(df_valores_cuan_sel_reales)
+cor_abs <- abs(cor_mat)
+cor_abs[upper.tri(cor_abs, diag = TRUE)] <- NA
+idx <- which(cor_abs == max(cor_abs, na.rm = TRUE), arr.ind = TRUE)[1, ]
+var_x_nombre <- colnames(cor_mat)[idx[2]]
+var_y_nombre <- colnames(cor_mat)[idx[1]]
+coef_cor_max <- cor_mat[idx[1], idx[2]]
+
+var_x_nombre
+var_y_nombre
+coef_cor_max
+```
+
+```{r grafvar, fig.cap="Representación gráfica de par de variables de mayor relación"}
+var1 <- df_valores_cuan_sel_reales[[var_x_nombre]]
+var2 <- df_valores_cuan_sel_reales[[var_y_nombre]]
+
+plot(var1, var2, xlab = var_x_nombre, ylab = var_y_nombre)
+abline(lm(var2 ~ var1), col = 'red')
+```
+
+```{r, include=FALSE}
+x <- df_valores_cuan_sel_reales[[var_x_nombre]]
+y <- df_valores_cuan_sel_reales[[var_y_nombre]]
+
+modelo <- lm(y ~ x)
+summary(modelo)
+```
+
 
 En esta sección se presentan los hallazgos de forma ordenada y directa. Los resultados no deben colocarse como salidas crudas de la consola de R, sino como redacción, tablas o figuras interpretables.
 
@@ -187,50 +309,6 @@ kable(
 
 # Discusión
 
-La discusión interpreta los resultados, los relaciona con la literatura previa y plantea implicaciones, limitaciones y posibles líneas futuras de trabajo. Aquí también pueden incorporarse referencias bibliográficas [@anderson2010geomorphology].
 
-Por ejemplo, si los hallazgos obtenidos coinciden con trabajos previos, puede indicarse explícitamente. Si difieren, debe discutirse por qué, considerando diferencias de escala, datos, métodos o contexto.
-
-En una redacción normal, puedes hacer referencias cruzadas así:
-
-* "Como se observa en la Figura \@ref(fig:figura-archivo)..."
-* "Los materiales empleados se resumen en la Tabla \@ref(tab:tabla-resumen)..."
-* "Los estadísticos descriptivos aparecen en la Tabla \@ref(tab:tabla-estadisticos)..."
-
-# Guía sobre referencias cruzadas
-
-## Cómo referir figuras generadas con código
-
-Si un chunk se llama `figura-codigo`, la referencia cruzada se escribe así:
-
-`Figura \@ref(fig:figura-codigo)`
-
-El identificador es el nombre del chunk precedido por `fig:`.
-
-## Cómo referir tablas generadas con `kable` o `kableExtra`
-
-Si un chunk se llama `tabla-resumen`, la referencia cruzada se escribe así:
-
-`Tabla \@ref(tab:tabla-resumen)`
-
-El identificador es el nombre del chunk precedido por `tab:`.
-
-## Cómo referir tablas escritas manualmente en Markdown
-
-En tablas manuales, usa esta sintaxis al inicio del título:
-
-`(\#tab:tabla-manual)`
-
-Y luego cita así:
-
-`Tabla \@ref(tab:mi-tabla)`
-
-## Recomendación importante
-
-En documentos **APA7 + bookdown**, para referencias cruzadas conviene usar `\@ref()` y no `\ref{}`.
-Ejemplos:
-
-* `Figura \@ref(fig:figura-codigo)`
-* `Tabla \@ref(tab:tabla-resumen)`
 
 # Referencias {-}
