@@ -1,6 +1,6 @@
 ---
-title: "Mi manuscrito en APA 7"
-author: "Autor"
+title: "Relación entre elevación y temperatura promedio del trimestre más frío, República Dominicana."
+author: "Justyn Rodríguez de la Cruz"
 affiliation: "Universidad Autónoma de Santo Domingo (UASD)"
 output:
   bookdown::pdf_document2:
@@ -14,11 +14,11 @@ lang: es-ES
 bibliography: references.bib
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 header-includes:
-  - \title{Mi manuscrito en APA 7}
+  - \title{Relación entre elevación y temperatura promedio del trimestre más frío, República Dominicana.}
   - \shorttitle{Mi manuscrito}
   - \affiliation{Universidad Autónoma de Santo Domingo (UASD)}
-  - \abstract{ESCRIBE AQUÍ TU RESUMEN. NO INTRODUZCAS ENTER NI SALTOS DE LÍNEA.}
-  - \keywords{palabra clave 1, palabra clave 2, palabra clave 3}
+  - \abstract{El medio físico en biogeografía, compuesto por factores abióticos y gradientes ambientales, actúa como un determinante crítico de la distribución de la biodiversidad en el espacio-tiempo (Sanmartín 2012; Matthews y Triantis 2021). Entre estos factores, la relación inversa entre la altitud y la temperatura del aire constituye uno de los impulsores ambientales más predictivos, registrándose descensos térmicos característicos en diversas regiones del mundo. En este estudio, se confirmó la existencia de un gradiente térmico altamente significativo para la República Dominicana ($R^2 = 0.96$; $p < 0.001$), donde la elevación explicó la mayor parte de la variación en la temperatura media del trimestre más frío. Los resultados revelaron un intercepto teórico de 24.33°C a nivel del mar y una pendiente de -0.58°C por cada 100 metros de ascenso altitudinal, un valor que se alinea con los estándares climatológicos globales y subraya la importancia de la Cordillera Central como un eje de estratificación climática y biológica fundamental para la isla.}
+  - \keywords{Temperatura, Elevación, Isla}
 
   - \usepackage{orcidlink}
   # - \usepackage{float}
@@ -99,7 +99,7 @@ Con la información presente surge la pregunta: ¿Existe una fuerte relación en
 
 # Materiales y métodos
 
-El estudio se basa en el país República Dominicana perteneciente a la isla La Hispaniola, una isla de clima tropical-húmedo modificado por vientos alisios y su topografía montañosa. A pesar de encontrarse en el trópico de Cáncer su clima permanece cálido todo el año, oscilando entre 25°C a 30°C en la costa [@Elizahenna_r_clima_2023]. Se generaron diez puntos aleatorios dentro de los límites geográficos de la República Dominicana (Tabla \@ref(tab:tablapuntos)), usando el archivo de vectores de la base de datos GADM (Global Administrative Areas). El proceso se realizó en R, usando la función st_sample del paquete sf [@Erre; FALTA REFERENCIA A PAQUETE SF].
+El estudio se basa en el país República Dominicana perteneciente a la isla La Hispaniola, una isla de clima tropical-húmedo modificado por vientos alisios y su topografía montañosa. A pesar de encontrarse en el trópico de Cáncer su clima permanece cálido todo el año, oscilando entre 25°C a 30°C en la costa [@Elizahenna_r_clima_2023]. Se generaron diez puntos aleatorios dentro de los límites geográficos de la República Dominicana (Figura \@ref(fig:mapaderd)), usando el archivo de vectores de la base de datos GADM (Global Administrative Areas). El proceso se realizó en R, usando la función st_sample del paquete sf [@Erre; FALTA REFERENCIA A PAQUETE SF].
 
 ```{r tablapuntos, tab.cap="Coordenadas geográficas de los 10 puntos aleatorios en República Dominicana."}
 puntos %>%
@@ -117,17 +117,21 @@ puntos %>%
   )
 ```
 
-```{r}
+```{r mapaderd, fig.cap="Mapa de distribución de puntos aleatorios."}
+knitr::include_graphics("mapa001.jpeg")
+```
+
+```{r, echo=FALSE, include=FALSE}
 plot(rd %>% st_as_sfc())
 plot(puntos, add = TRUE)
 ```
 
-```{r, include=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 st_write(puntos, "puntos_aleatorios.gpkg", delete_dsn = TRUE)
 st_write(rd, "contorno_rd.gpkg", delete_dsn = TRUE)
 ```
 
-Para las variables ambientales de cada punto, se seleccionaron cinco variblaes cuantitativas mediante un procedimiento de aletorización para evitar sesgos y asegurar una representación integral del paisaje, se seleccionaron dos variables de naturaleza topográfica provenientes de las fuentes CGIAR, G90PE o YINSOLTIME; y tres variables bioclimáticas derivadas de la base de datos CHELSA v2.1. Estas últimas se dividieron para incluir obligatoriamente una métrica de temperatura (bio1-bio11), una de precipitación (bio12-bio19) y una variable bioclimática adicional aleatoria para el conjunto restante.
+Para las variables ambientales de cada punto, se seleccionaron cinco variables cuantitativas mediante un procedimiento de aletorización para evitar sesgos y asegurar una representación integral del paisaje, se seleccionaron dos variables de naturaleza topográfica provenientes de las fuentes CGIAR, G90PE o YINSOLTIME; y tres variables bioclimáticas derivadas de la base de datos CHELSA v2.1. Estas últimas se dividieron para incluir obligatoriamente una métrica de temperatura (bio1-bio11), una de precipitación (bio12-bio19) y una variable bioclimática adicional aleatoria para el conjunto restante.
 
 ```{r, include=FALSE}
 {set.seed(123)
@@ -257,7 +261,7 @@ var_y_nombre
 coef_cor_max
 ```
 
-```{r grafvar, fig.cap="Representación gráfica de par de variables de mayor relación"}
+```{r, include=FALSE}
 var1 <- df_valores_cuan_sel_reales[[var_x_nombre]]
 var2 <- df_valores_cuan_sel_reales[[var_y_nombre]]
 
@@ -265,50 +269,75 @@ plot(var1, var2, xlab = var_x_nombre, ylab = var_y_nombre)
 abline(lm(var2 ~ var1), col = 'red')
 ```
 
+```{r grafvar, fig.cap="Representación gráfica de par de variables de mayor relación"}
+#TEEEST
+library(ggplot2)
+nombres_puntos <- paste('P', 1:nrow(df_valores_cuan_sel_reales))
+ggplot(df_valores_cuan_sel_reales, aes(x = var1, y = var2)) +
+  geom_point(color = "darkblue", size = 3, alpha = 0.7) +
+  geom_smooth(method = "lm", color = "yellow", fill = "lightgray", se = TRUE) +
+  ggrepel::geom_text_repel(aes(label = nombres_puntos), size = 3) +
+  labs(
+    x = "Elevación (msnm)",
+    y = "Temperatura media trimestre frío (°C)",
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.title = element_text(face = "bold")
+  )
+
+```
+
+
 ```{r, include=FALSE}
 x <- df_valores_cuan_sel_reales[[var_x_nombre]]
 y <- df_valores_cuan_sel_reales[[var_y_nombre]]
 
-modelo <- lm(y ~ x)
-summary(modelo)
+modelo_lineal <- lm(y ~ x)
+
+summary(modelo_lineal)
 ```
 
+```{r tabmodelre, tab.cap="Resultados del modelo de regresión lineal simple"}
+tabla_interpretacion <- data.frame(
+  Parámetro = c(
+    "**Intercepto ($b$)**", 
+    "**Pendiente ($a$)**", 
+    "**Signo de la relación**", 
+    "**Magnitud del ajuste ($R^2$)**"
+  ),
+  `Valor Estimado` = c(
+    "24.3274", 
+    "-0.0058", 
+    "Negativo ($-$)", 
+    "0.9638"
+  ),
+  Interpretación = c(
+    "La temperatura media teórica a nivel del mar (0 msnm) es de aproximadamente 24.3°C.",
+    "Por cada metro de incremento en la elevación, la temperatura disminuye 0.0058°C.",
+    "Existe una relación inversamente proporcional: a mayor altitud, menor temperatura.",
+    "El modelo es sumamente robusto; la elevación explica el 96.4% de la variabilidad térmica."
+  ),
+  check.names = FALSE
+)
 
-En esta sección se presentan los hallazgos de forma ordenada y directa. Los resultados no deben colocarse como salidas crudas de la consola de R, sino como redacción, tablas o figuras interpretables.
-
-Por ejemplo, la Figura \@ref(fig:figura-codigo) sugiere una relación negativa entre el peso del vehículo y el rendimiento de combustible en este conjunto de datos de ejemplo. Del mismo modo, la Tabla \@ref(tab:tabla-estadisticos) resume algunos estadísticos descriptivos básicos.
-
-## Ejemplo adicional de tabla de resultados
-
-```{r tabla-estadisticos}
-resumen_resultados <- mtcars %>%
-  summarise(
-    media_mpg = mean(mpg),
-    sd_mpg = sd(mpg),
-    media_wt = mean(wt),
-    sd_wt = sd(wt)
-  ) %>%
-  pivot_longer(cols = everything(),
-               names_to = "Estadistico",
-               values_to = "Valor")
-
-kable(
-  resumen_resultados,
-  format = "latex",
-  booktabs = TRUE,
-  digits = 2,
-  caption = "Estadísticos descriptivos básicos del conjunto de datos de ejemplo.",
-  col.names = c("Estadístico", "Valor")
-) %>%
-  kable_styling(
-    latex_options = c("hold_position"),
-    full_width = FALSE,
-    font_size = 10
+tabla_interpretacion %>%
+  knitr::kable(
+    format = "pipe",
+    align = "lll",  
+    escape = FALSE
   )
 ```
 
+
 # Discusión
 
+Los resultados concluyen en que existe una correlación entre los valores de elevación y temperatura media del trimestre más frío, específicamente de acuerdo con el modelo de regresión lineal (Tabla \@ref(tab:tabmodelre)) se revela que la correlación es negativa/inversa, contando con un coeficiente de relación (Tabla \@ref(tab:tabcorr)) casi definitivo (-0.982). Los datos obtenidos indican que por cada metro de elevación, la temperatura llega a disminuir 0.0058°C, resultando en una disminución térmica de -0,58°C por cada 100 metros de elevación. Esto explica por qué en República dominicana se encuentran ecosistemas tan contrastantes como bosques secos costeros y los bosques de pinos de alta montaña, significando un filtro ambiental para la biota que da forma a los patrones de distribución de cientos de especies animales y vegetales alrededor de la isla.
 
+Una de las limitaciones del estudio es el bajo tamaño de muestra, 10 puntos difícilmente llegarían a ser suficientes para representar la complejidad climática de una isla completa, un solo outlier podría cambiar drásticamente la pendiente del modelo en este caso. Otra limitación es el uso de CHELSA v2.1, que tiene una resolución de 1 km² por píxel, lo cuál podría representar un sesgo al no tomar en cuenta pequeñas fluctaciones ambientales que ocurren con la presencia de microclimas. También se omite el efecto de la costa, en las islas la proximidad al mar actúa como regulador térmico.
+
+
+# Conclusión
 
 # Referencias {-}
