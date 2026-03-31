@@ -99,7 +99,7 @@ Con la información presente surge la pregunta: ¿Existe una fuerte relación en
 
 # Materiales y métodos
 
-El estudio se basa en el país República Dominicana perteneciente a la isla La Hispaniola, una isla de clima tropical-húmedo modificado por vientos alisios y su topografía montañosa. A pesar de encontrarse en el trópico de Cáncer su clima permanece cálido todo el año, oscilando entre 25°C a 30°C en la costa [@Elizahenna_r_clima_2023]. Se generaron diez puntos aleatorios dentro de los límites geográficos de la República Dominicana (Figura \@ref(fig:mapaderd)), usando el archivo de vectores de la base de datos GADM (Global Administrative Areas). El proceso se realizó en R, usando la función st_sample del paquete sf [@Erre; FALTA REFERENCIA A PAQUETE SF].
+El estudio se basa en el país República Dominicana perteneciente a la isla La Hispaniola, una isla de clima tropical-húmedo modificado por vientos alisios y su topografía montañosa. A pesar de encontrarse en el trópico de Cáncer su clima permanece cálido todo el año, oscilando entre 25°C a 30°C en la costa [@Elizahenna_r_clima_2023]. Se generaron diez puntos aleatorios dentro de los límites geográficos de la República Dominicana (Figura \@ref(fig:mapaderd)), usando el archivo de vectores de la base de datos GADM (Global Administrative Areas). El proceso se realizó en R, usando la función st_sample del paquete sf [@Erre; @eseefe].
 
 ```{r tablapuntos, tab.cap="Coordenadas geográficas de los 10 puntos aleatorios en República Dominicana."}
 puntos %>%
@@ -111,9 +111,9 @@ puntos %>%
   st_drop_geometry() %>%
   as.data.frame() %>%
   knitr::kable(
-    format = "pipe",  # Genera el estilo de líneas limpias
+    format = "pipe",  
     align = 'c', 
-    col.names = c("Punto", "Longitud", "Latitud") # Asegura mayúsculas en encabezados
+    col.names = c("Punto", "Longitud", "Latitud") 
   )
 ```
 
@@ -131,7 +131,7 @@ st_write(puntos, "puntos_aleatorios.gpkg", delete_dsn = TRUE)
 st_write(rd, "contorno_rd.gpkg", delete_dsn = TRUE)
 ```
 
-Para las variables ambientales de cada punto, se seleccionaron cinco variables cuantitativas mediante un procedimiento de aletorización para evitar sesgos y asegurar una representación integral del paisaje, se seleccionaron dos variables de naturaleza topográfica provenientes de las fuentes CGIAR, G90PE o YINSOLTIME; y tres variables bioclimáticas derivadas de la base de datos CHELSA v2.1. Estas últimas se dividieron para incluir obligatoriamente una métrica de temperatura (bio1-bio11), una de precipitación (bio12-bio19) y una variable bioclimática adicional aleatoria para el conjunto restante.
+Para las variables ambientales de cada punto, se seleccionaron cinco variables cuantitativas mediante un procedimiento de aletorización para evitar sesgos y asegurar una representación integral del paisaje, se seleccionaron dos variables de naturaleza topográfica provenientes de las fuentes CGIAR, G90PE o YINSOLTIME; y tres variables bioclimáticas derivadas de la base de datos CHELSA v2.1 [@TEAMOCHELSA]. Estas últimas se dividieron para incluir obligatoriamente una métrica de temperatura (bio1-bio11), una de precipitación (bio12-bio19) y una variable bioclimática adicional aleatoria para el conjunto restante.
 
 ```{r, include=FALSE}
 {set.seed(123)
@@ -275,7 +275,7 @@ library(ggplot2)
 nombres_puntos <- paste('P', 1:nrow(df_valores_cuan_sel_reales))
 ggplot(df_valores_cuan_sel_reales, aes(x = var1, y = var2)) +
   geom_point(color = "darkblue", size = 3, alpha = 0.7) +
-  geom_smooth(method = "lm", color = "yellow", fill = "lightgray", se = TRUE) +
+  geom_smooth(method = "lm", color = "yellow", fill = "lightyellow", se = TRUE) +
   ggrepel::geom_text_repel(aes(label = nombres_puntos), size = 3) +
   labs(
     x = "Elevación (msnm)",
@@ -286,7 +286,6 @@ ggplot(df_valores_cuan_sel_reales, aes(x = var1, y = var2)) +
     panel.grid.minor = element_blank(),
     axis.title = element_text(face = "bold")
   )
-
 ```
 
 
@@ -339,5 +338,7 @@ Una de las limitaciones del estudio es el bajo tamaño de muestra, 10 puntos dif
 
 
 # Conclusión
+
+Se identificó una relación inversa con respecto a la temperatura promedio del trimestre más frío en relación con la elevación (msnm), se aprendió utolizar la matriz de correlación de Pearson para identificar variables relacionadas y a representar de forma efectiva y profesional un mapa de coordenadas, las limitaciones del estudio fueron previamente establecidas en el apartado de discusión.
 
 # Referencias {-}
